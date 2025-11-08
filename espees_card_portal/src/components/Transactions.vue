@@ -175,7 +175,7 @@ export default {
        return []
       return {
         card_id: this.formData.card_id,
-        balance: this.transactionData.body.balance,
+        balance: this.transactionData.body.body.balance,
         currency: 'Espees',
         status: 'active',
         transactions: this.transactionData.transactions.body
@@ -209,6 +209,8 @@ export default {
       handler(newData) {
         if (newData) {
           console.log('Received transaction data from parent:', newData)
+          console.log('-----------------')
+          console.log(this.transactionData.body.body.balance)
           // this.localTransactionData = null // Clear local data when we get data from parent
         }
       },
@@ -218,6 +220,7 @@ export default {
     // Watch for success messages to handle local data simulation
     messageType(newType) {
       if (newType === 'success' && !this.transactionData) {
+        
         // If we don't have data from the API yet, use simulated data
         // This will be replaced by real API data when the proxy is working
         //this.localTransactionData = this.getSimulatedData()

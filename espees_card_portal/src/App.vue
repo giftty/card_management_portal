@@ -30,7 +30,7 @@ import ActivateCard from './components/ActivateCard.vue'
 import ChangePin from './components/ChangePin.vue'
 import Transactions from './components/Transactions.vue'
 
-const API_BASE_URL = 'http://102.219.189.173/proxy'    //'http://localhost:3002/proxy'
+const API_BASE_URL =  'http://102.219.189.173/proxy'  //'http://localhost:3002/proxy'
 
 export default {
   name: 'App',
