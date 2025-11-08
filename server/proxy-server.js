@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+const path = require('path');
 //const fetch = require('node-fetch');
 
 const app = express();
@@ -7,6 +9,25 @@ const PORT = 3002;
 
 app.use(cors());
 app.use(express.json());
+
+/ Serve static files from Vue dist
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// API proxy middleware
+app.use('/api', createProxyMiddleware({
+  target: 'https://api.espees.org',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api': '',
+  },
+  onProxyReq: (proxyReq, req, res) => {
+    console.log('Proxying request:', req.method, req.url);
+  },
+  onError: (err, req, res) => {
+    console.error('Proxy error:', err);
+    res.status(500).json({ error: 'Proxy error' });
+  }
+}));
 
 // Proxy endpoints
 app.post('/proxy/cards/activate', async (req, res) => {
