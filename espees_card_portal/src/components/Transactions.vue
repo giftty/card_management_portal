@@ -175,7 +175,7 @@ export default {
        return []
       return {
         card_id: this.formData.card_id,
-        balance: this.transactionData.body.body.balance,
+        balance: this.transactionData.balance.body.balance,
         currency: 'Espees',
         status: 'active',
         transactions: this.transactionData.transactions.body
@@ -210,7 +210,7 @@ export default {
         if (newData) {
           console.log('Received transaction data from parent:', newData)
           console.log('-----------------')
-          console.log(this.transactionData.body.body.balance)
+          console.log(this.transactionData.balance.body.balance)
           // this.localTransactionData = null // Clear local data when we get data from parent
         }
       },
@@ -245,17 +245,19 @@ export default {
    
     
     // Format currency amount
-    formatCurrency(amount) {
-      if (amount === undefined || amount === null) return 'Espees 0.00'
-      
-      const formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'usd',
-        minimumFractionDigits: 2
-      })
-      
-      return formatter.format(amount)
-    },
+     formatCurrency(amount) {
+    if (amount === undefined || amount === null) return 'Espees 0.00'
+    
+    const absoluteAmount = Math.abs(amount)
+    const isNegative = amount < 0
+    
+    const formattedAmount = absoluteAmount.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })
+    
+    return `${isNegative ? '-' : ''}Espees ${formattedAmount}`
+  },
     
     // Format date
     formatDate(dateString) {
