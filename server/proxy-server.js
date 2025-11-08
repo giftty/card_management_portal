@@ -10,7 +10,7 @@ const PORT = 3002;
 app.use(cors());
 app.use(express.json());
 
-/ Serve static files from Vue dist
+// Serve static files from Vue dist
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // API proxy middleware
