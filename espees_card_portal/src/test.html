@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purple Animated Background</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a0b2e, #2d1b69, #5a2a9d, #8a2be2);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            overflow: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Floating Elements */
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(199, 125, 255, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Stars */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.2;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Nebula Effect */
+        .nebula {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(157, 78, 221, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(199, 125, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(224, 170, 255, 0.2) 0%, transparent 50%);
+            animation: nebulaMove 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes nebulaMove {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                transform: translate(-5%, -5%) scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nebula"></div>
+    <div class="stars" id="stars"></div>
+    <div class="floating-elements" id="floatingElements"></div>
+
+    <script>
+        // Create floating elements
+        function createFloatingElements() {
+            const container = document.getElementById('floatingElements');
+            const elementCount = 20;
+            
+            for (let i = 0; i < elementCount; i++) {
+                const element = document.createElement('div');
+                element.classList.add('floating-element');
+                
+                // Random properties
+                const size = Math.random() * 100 + 20;
+                const left = Math.random() * 100;
+                const delay = Math.random() * 15;
+                const duration = Math.random() * 10 + 15;
+                
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                element.style.left = `${left}%`;
+                element.style.animationDelay = `${delay}s`;
+                element.style.animationDuration = `${duration}s`;
+                
+                container.appendChild(element);
+            }
+        }
+        
+        // Create stars
+        function createStars() {
+            const container = document.getElementById('stars');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random properties
+                const size = Math.random() * 3;
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const delay = Math.random() * 5;
+                const duration = Math.random() * 3 + 2;
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${left}%`;
+                star.style.top = `${top}%`;
+                star.style.animationDelay = `${delay}s`;
+                star.style.animationDuration = `${duration}s`;
+                
+                container.appendChild(star);
+            }
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', function() {
+            createFloatingElements();
+            createStars();
+        });
+    </script>
+</body>
+</html>
