@@ -29,7 +29,7 @@ import HomePage from './components/HomePage.vue'
 import ActivateCard from './components/ActivateCard.vue'
 import ChangePin from './components/ChangePin.vue'
 import Transactions from './components/Transactions.vue'
-const Dev_ENVIR = 'dev'
+const Dev_ENVIR = 'production'
 const API_BASE_URL = Dev_ENVIR=='dev'?'http://localhost:3002':'https://cards.espees.org/proxy';
 
 export default {
