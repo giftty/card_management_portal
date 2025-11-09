@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const { https } = require('follow-redirects');
 const PORT = 3002;
 
 // Enable CORS for all routes - allow your Vue app's port
@@ -37,25 +38,52 @@ app.get('/proxy/health', (req, res) => {
 });
 
 // Card activation endpoint
+// Helper to perform POST request using follow-redirects
+function postRequest(url, data, headers = {}) {
+    return new Promise((resolve, reject) => {
+        const jsonData = JSON.stringify(data);
+        const urlObj = new URL(url);
+
+        const options = {
+            method: 'POST',
+            hostname: urlObj.hostname,
+            path: urlObj.pathname,
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(jsonData),
+                ...headers
+            }
+        };
+
+        const req = https.request(options, (res) => {
+            let body = '';
+            res.on('data', chunk => body += chunk);
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    try {
+                        resolve(JSON.parse(body));
+                    } catch (e) {
+                        reject(new Error('Failed to parse JSON response'));
+                    }
+                } else {
+                    reject(new Error(`API responded with status: ${res.statusCode}`));
+                }
+            });
+        });
+
+        req.on('error', reject);
+        req.write(jsonData);
+        req.end();
+    });
+}
+
+// Activate card
 app.post('/proxy/cards/activate', async (req, res) => {
     try {
         console.log('Activation request:', req.body);
-        
-        const response = await fetch('https://api.espees.org/cards/activate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(req.body)
-        });
-        
-        if (!response.ok) {
-            throw new Error(`API responded with status: ${response.status}`);
-        }
-        
-        const data = await response.json();
+
+        const data = await postRequest('https://api.espees.org/cards/activate', req.body);
         res.json(data);
-        
     } catch (error) {
         console.error('Activation error:', error);
         res.status(500).json({ 
@@ -65,26 +93,13 @@ app.post('/proxy/cards/activate', async (req, res) => {
     }
 });
 
-// Add card endpoint
+// Add card
 app.post('/proxy/cards/add', async (req, res) => {
     try {
         console.log('Add card request:', req.body);
-        
-        const response = await fetch('https://api.espees.org/cards/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(req.body)
-        });
-        
-        if (!response.ok) {
-            throw new Error(`API responded with status: ${response.status}`);
-        }
-        
-        const data = await response.json();
+
+        const data = await postRequest('https://api.espees.org/cards/add', req.body);
         res.json(data);
-        
     } catch (error) {
         console.error('Add card error:', error);
         res.status(500).json({ 
@@ -94,53 +109,28 @@ app.post('/proxy/cards/add', async (req, res) => {
     }
 });
 
-// Balance and transactions endpoint
+// Balance and transactions
 app.post('/proxy/cards/balance', async (req, res) => {
     try {
         console.log('Balance request:', req.body);
-        
+
         // Get balance
-        const balanceResponse = await fetch('https://api.espees.org/cards/balance', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(req.body)
-        });
-        
-        if (!balanceResponse.ok) {
-            throw new Error(`Balance API responded with status: ${balanceResponse.status}`);
-        }
-        
-        const balanceData = await balanceResponse.json();
+        const balanceData = await postRequest('https://api.espees.org/cards/balance', req.body);
 
         // Get transactions
         let transactionsData = { error: 'Transactions not available' };
         try {
-            const transactionsResponse = await fetch('https://api.espees.org/cards/transactions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': 'ynE78nw7bD8zq4ecJLZmg1HFTtBZDSvF9PWHeRZn'
-                },
-                body: JSON.stringify(req.body)
-            });
-            
-            if (transactionsResponse.ok) {
-                transactionsData = await transactionsResponse.json();
-            }
+            transactionsData = await postRequest(
+                'https://api.espees.org/cards/transactions',
+                req.body,
+                { 'x-api-key': 'ynE78nw7bD8zq4ecJLZmg1HFTtBZDSvF9PWHeRZn' }
+            );
         } catch (transactionsError) {
-            console.warn('Transactions API error:', transactionsError);
-            // Continue with balance data only
+            console.warn('Transactions API error:', transactionsError.message);
         }
 
-        const result = {
-            balance: balanceData,
-            transactions: transactionsData
-        };
-        
-        res.json(result);
-        
+        res.json({ balance: balanceData, transactions: transactionsData });
+
     } catch (error) {
         console.error('Balance check error:', error);
         res.status(500).json({ 
