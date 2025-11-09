@@ -84,11 +84,15 @@ export default {
               crdpn: data.crdpn
             }
             break
-          case 'pinChange':
+            case 'add-card':
             endpoint = '/cards/add'
             body = {
               card_id: data.card_id
             }
+            break
+          case 'pinChange':
+           
+            return;
             break
           case 'transactions':
             endpoint = '/cards/balance'
@@ -112,7 +116,7 @@ export default {
         
         const result = await response.json()
         
-        this.message = this.getSuccessMessage(type)
+        this.message =  result.message  //this.getSuccessMessage(type)
         this.messageType = 'success'
         
         // Store the API response data for the transactions page
@@ -125,7 +129,7 @@ export default {
         if (type !== 'transactions') {
           setTimeout(() => {
             this.currentPage = 'home'
-          }, 2000)
+          }, 4000)
         }
         
         console.log('API Response:', result)

@@ -111,6 +111,14 @@ export default {
         this.formData.crdpn = newDigits.join('')
       },
       deep: true
+    },
+    messageType(n){
+    if(n == 'success'){
+        this.$emit('submit-form', {
+        type: 'activation',
+        data: this.formData
+        })
+      }
     }
   },
   methods: {
@@ -138,12 +146,13 @@ export default {
         event.preventDefault()
       }
     },
-    submitForm() {
+    async submitForm() { 
+      var that = this
       if (this.isFormValid) {
-        this.$emit('submit-form', {
-          type: 'activation',
+        await this.$emit('submit-form', {
+          type: 'add-card',
           data: this.formData
-        })
+        })  
       }
     }
   }
