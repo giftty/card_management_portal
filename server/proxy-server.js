@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 });
 
 // Health check endpoint
-app.get('/proxy/health', (req, res) => {
+app.get('/health', (req, res) => {
     res.json({ 
         status: 'Proxy server is running',
         timestamp: new Date().toISOString()
@@ -78,7 +78,7 @@ function postRequest(url, data, headers = {}) {
 }
 
 // Activate card
-app.post('/proxy/cards/activate', async (req, res) => {
+app.post('/cards/activate', async (req, res) => {
     try {
         console.log('Activation request:', req.body);
 
@@ -94,7 +94,7 @@ app.post('/proxy/cards/activate', async (req, res) => {
 });
 
 // Add card
-app.post('/proxy/cards/add', async (req, res) => {
+app.post('/cards/add', async (req, res) => {
     try {
         console.log('Add card request:', req.body);
 
@@ -110,7 +110,7 @@ app.post('/proxy/cards/add', async (req, res) => {
 });
 
 // Balance and transactions
-app.post('/proxy/cards/balance', async (req, res) => {
+app.post('/cards/balance', async (req, res) => {
     try {
         console.log('Balance request:', req.body);
 

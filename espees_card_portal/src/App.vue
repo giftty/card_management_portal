@@ -29,8 +29,8 @@ import HomePage from './components/HomePage.vue'
 import ActivateCard from './components/ActivateCard.vue'
 import ChangePin from './components/ChangePin.vue'
 import Transactions from './components/Transactions.vue'
-
-const API_BASE_URL = 'http://102.219.189.77:3002/proxy'  //'http://localhost:3002/proxy'  //'http://102.219.189.173/proxy'
+const Dev_ENVIR = 'dev'
+const API_BASE_URL = Dev_ENVIR=='dev'?'http://localhost:3002':'https://cards.espees.org/proxy';
 
 export default {
   name: 'App',
@@ -116,7 +116,7 @@ export default {
         
         const result = await response.json()
         
-        this.message =  result.message  //this.getSuccessMessage(type)
+        this.message =   this.getSuccessMessage(type,result.message)
         this.messageType = 'success'
         
         // Store the API response data for the transactions page
@@ -147,11 +147,11 @@ export default {
         this.loading = false
       }
     },
-    getSuccessMessage(type) {
+    getSuccessMessage(type,message) {
       const messages = {
-        activation: 'Card activated successfully!',
-        pinChange: 'PIN changed successfully!',
-        transactions: 'Transactions retrieved successfully!'
+        activation: message,
+        pinChange: message,
+        transactions: 'Transactions retrieved successfully!\r\n'
       }
       return messages[type]
     },
